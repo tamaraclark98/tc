@@ -1,0 +1,596 @@
+
+<!doctype html>
+<html lang="en-GB">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="profile" href="https://gmpg.org/xfn/11" />
+	<title>Tamara Clark for Pitcher Partners &#8211; CV</title>
+
+<!-- Async WordPress.com Remote Login -->
+<script id="wpcom_remote_login_js">
+var wpcom_remote_login_extra_auth = '';
+function wpcom_remote_login_remove_dom_node_id( element_id ) {
+	var dom_node = document.getElementById( element_id );
+	if ( dom_node ) { dom_node.remove(); }
+}
+function wpcom_remote_login_remove_dom_node_classes( class_name ) {
+	var dom_nodes = document.querySelectorAll( '.' + class_name );
+	for ( var i = 0; i < dom_nodes.length; i++ ) {
+		dom_nodes[i].remove();
+	}
+}
+function wpcom_remote_login_final_cleanup() {
+	wpcom_remote_login_remove_dom_node_classes( "wpcom_remote_login_msg" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_key" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_validate" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_js" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_request_access_iframe" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_request_access_styles" );
+}
+
+// Watch for messages back from the remote login
+window.addEventListener( "message", function( e ) {
+	if ( e.origin === "https://r-login.wordpress.com" ) {
+		var data = {};
+		try {
+			data = JSON.parse( e.data );
+		} catch( e ) {
+			wpcom_remote_login_final_cleanup();
+			return;
+		}
+
+		if ( data.msg === 'LOGIN' ) {
+			// Clean up the login check iframe
+			wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_key" );
+
+			var id_regex = new RegExp( /^[0-9]+$/ );
+			var token_regex = new RegExp( /^.*|.*|.*$/ );
+			if (
+				token_regex.test( data.token )
+				&& id_regex.test( data.wpcomid )
+			) {
+				// We have everything we need to ask for a login
+				var script = document.createElement( "script" );
+				script.setAttribute( "id", "wpcom_remote_login_validate" );
+				script.src = '/remote-login.php?wpcom_remote_login=validate'
+					+ '&wpcomid=' + data.wpcomid
+					+ '&token=' + encodeURIComponent( data.token )
+					+ '&host=' + window.location.protocol
+						+ '//' + window.location.hostname;
+				document.body.appendChild( script );
+			}
+
+			return;
+		}
+
+		// Safari ITP, not logged in, so redirect
+		if ( data.msg === 'LOGIN-REDIRECT' ) {
+			window.location = 'https://wordpress.com/log-in?redirect_to=' + window.location.href;
+			return;
+		}
+
+		// Safari ITP, storage access failed, remove the request
+		if ( data.msg === 'LOGIN-REMOVE' ) {
+			var css_zap = 'html { -webkit-transition: margin-top 1s; transition: margin-top 1s; } /* 9001 */ html { margin-top: 0 !important; } * html body { margin-top: 0 !important; } @media screen and ( max-width: 782px ) { html { margin-top: 0 !important; } * html body { margin-top: 0 !important; } }';
+			var style_zap = document.createElement( 'style' );
+			style_zap.type = 'text/css';
+			style_zap.appendChild( document.createTextNode( css_zap ) );
+			document.body.appendChild( style_zap );
+
+			var e = document.getElementById( 'wpcom_request_access_iframe' );
+			e.parentNode.removeChild( e );
+
+			document.cookie = 'wordpress_com_login_access=denied; path=/; max-age=31536000';
+
+			return;
+		}
+
+		// Safari ITP
+		if ( data.msg === 'REQUEST_ACCESS' ) {
+			console.log( 'request access: safari' );
+
+			// Check ITP iframe enable/disable knob
+			if ( wpcom_remote_login_extra_auth !== 'safari_itp_iframe' ) {
+				return;
+			}
+
+			// If we are in a "private window" there is no ITP.
+			var private_window = false;
+			try {
+				var opendb = window.openDatabase( null, null, null, null );
+			} catch( e ) {
+				private_window = true;
+			}
+
+			if ( private_window ) {
+				console.log( 'private window' );
+				return;
+			}
+
+			var iframe = document.createElement( 'iframe' );
+			iframe.id = 'wpcom_request_access_iframe';
+			iframe.setAttribute( 'scrolling', 'no' );
+			iframe.setAttribute( 'sandbox', 'allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-top-navigation-by-user-activation' );
+			iframe.src = 'https://r-login.wordpress.com/remote-login.php?wpcom_remote_login=request_access&origin=' + encodeURIComponent( data.origin ) + '&wpcomid=' + encodeURIComponent( data.wpcomid );
+
+			var css = 'html { -webkit-transition: margin-top 1s; transition: margin-top 1s; } /* 9001 */ html { margin-top: 46px !important; } * html body { margin-top: 46px !important; } @media screen and ( max-width: 660px ) { html { margin-top: 71px !important; } * html body { margin-top: 71px !important; } #wpcom_request_access_iframe { display: block; height: 71px !important; } } #wpcom_request_access_iframe { border: 0px; height: 46px; position: fixed; top: 0; left: 0; width: 100%; min-width: 100%; z-index: 99999; background: #23282d; } ';
+
+			var style = document.createElement( 'style' );
+			style.type = 'text/css';
+			style.id = 'wpcom_request_access_styles';
+			style.appendChild( document.createTextNode( css ) );
+			document.body.appendChild( style );
+
+			document.body.appendChild( iframe );
+		}
+
+		if ( data.msg === 'DONE' ) {
+			wpcom_remote_login_final_cleanup();
+		}
+	}
+}, false );
+
+// Inject the remote login iframe after the page has had a chance to load
+// more critical resources
+window.addEventListener( "DOMContentLoaded", function( e ) {
+	var iframe = document.createElement( "iframe" );
+	iframe.style.display = "none";
+	iframe.setAttribute( "scrolling", "no" );
+	iframe.setAttribute( "id", "wpcom_remote_login_key" );
+	iframe.src = "https://r-login.wordpress.com/remote-login.php"
+		+ "?wpcom_remote_login=key"
+		+ "&origin=aHR0cHM6Ly90YW1hcmFjbGFya2ZvcnBpdGNoZXJwYXJ0bmVycy5ob21lLmJsb2c%3D"
+		+ "&wpcomid=165757591"
+		+ "&time=1568602641";
+	document.body.appendChild( iframe );
+}, false );
+</script>
+<link rel='dns-prefetch' href='//s2.wp.com' />
+<link rel='dns-prefetch' href='//s1.wp.com' />
+<link rel='dns-prefetch' href='//tamaraclarkforpitcherpartnershome.wordpress.com' />
+<link rel='dns-prefetch' href='//s0.wp.com' />
+<link rel='dns-prefetch' href='//wordpress.com' />
+<link rel='dns-prefetch' href='//fonts.googleapis.com' />
+<link rel="alternate" type="application/rss+xml" title="Tamara Clark for Pitcher Partners &raquo; Feed" href="https://tamaraclarkforpitcherpartners.home.blog/feed/" />
+<link rel="alternate" type="application/rss+xml" title="Tamara Clark for Pitcher Partners &raquo; Comments Feed" href="https://tamaraclarkforpitcherpartners.home.blog/comments/feed/" />
+	<script type="text/javascript">
+		/* <![CDATA[ */
+		function addLoadEvent(func) {
+			var oldonload = window.onload;
+			if (typeof window.onload != 'function') {
+				window.onload = func;
+			} else {
+				window.onload = function () {
+					oldonload();
+					func();
+				}
+			}
+		}
+		/* ]]> */
+	</script>
+			<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/wpcom-smileys\/twemoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/wpcom-smileys\/twemoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/s2.wp.com\/wp-includes\/js\/wp-emoji-release.min.js?m=1556893897h&ver=5.2.3"}};
+			!function(a,b,c){function d(a,b){var c=String.fromCharCode;l.clearRect(0,0,k.width,k.height),l.fillText(c.apply(this,a),0,0);var d=k.toDataURL();l.clearRect(0,0,k.width,k.height),l.fillText(c.apply(this,b),0,0);var e=k.toDataURL();return d===e}function e(a){var b;if(!l||!l.fillText)return!1;switch(l.textBaseline="top",l.font="600 32px Arial",a){case"flag":return!(b=d([55356,56826,55356,56819],[55356,56826,8203,55356,56819]))&&(b=d([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]),!b);case"emoji":return b=d([55357,56424,55356,57342,8205,55358,56605,8205,55357,56424,55356,57340],[55357,56424,55356,57342,8203,55358,56605,8203,55357,56424,55356,57340]),!b}return!1}function f(a){var c=b.createElement("script");c.src=a,c.defer=c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var g,h,i,j,k=b.createElement("canvas"),l=k.getContext&&k.getContext("2d");for(j=Array("flag","emoji"),c.supports={everything:!0,everythingExceptFlag:!0},i=0;i<j.length;i++)c.supports[j[i]]=e(j[i]),c.supports.everything=c.supports.everything&&c.supports[j[i]],"flag"!==j[i]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[j[i]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(h=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",h,!1),a.addEventListener("load",h,!1)):(a.attachEvent("onload",h),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),g=c.source||{},g.concatemoji?f(g.concatemoji):g.wpemoji&&g.twemoji&&(f(g.twemoji),f(g.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+	<link rel='stylesheet' id='all-css-0-1' href='https://s1.wp.com/_static/??-eJylkttuwyAMhl9oxD2ozW6mPQskXkrDSdgoytuPQFv1oGWTdoOw/X8+gGEKovOO0THYJIJJg3YEU+i8FWS1wfnJajqiN7jDlPHDDbQyjsjaDULJCFn66HmB72p2PqLgE1qkHLZBMvCUNbPTDhnRrcFGj0hwRg6yG0WxXuRX7ZCyqTAOYikJx2bXbEAlbfplloKrKOMMxLPB/6cpM/0hTaEI8luNGK9WTbjeSecv4m2z3ecmek1ce6CmkiXLj/xXMkaQZhTY6/JVNQKbpoXgiSnPQlxbqtmfvb9+7OVHs8LmIhJNfhPHa5gNxyu1XE9yGWdFX7dUqRCRSOTT6mQvC7Xenl1aqUtTVvbBU1ENzrPONN0uS+DTfmwPx7Z9P7SH3fkbu9I7aw==?cssminify=yes' type='text/css' media='all' />
+<link rel='stylesheet' id='professional-business-fonts-css'  href='https://fonts.googleapis.com/css?family=Crimson+Text%3A400%2C600%2C700%2C400italic%2C600italic&#038;subset=latin%2Clatin-ext' type='text/css' media='all' />
+<link rel='stylesheet' id='all-css-2-1' href='https://s1.wp.com/_static/??-eJyVy8ENgCAMAMCFxIoRfRlnQVIjCIXYEuP26gg+73FwFeUyCZKA7JiQodQVypk3ZPaZbFRrZU+vgOWOqAJKse5oHXMDv/vXljRrM5peT0OnwwMCTzDJ?cssminify=yes' type='text/css' media='all' />
+<link rel='stylesheet' id='print-css-3-1' href='https://s2.wp.com/wp-content/themes/pub/twentynineteen/print.css?m=1551232311h&cssminify=yes' type='text/css' media='print' />
+<link rel='stylesheet' id='all-css-4-1' href='https://s2.wp.com/_static/??-eJx9kdFuwyAMRX+o1KvURsrDtG9xmEdoDUaxI5S/H1krtdUknuwL91yDDLU4L9koG9hMiRTKOoHVdrDlmMmIMsTsQW1jcrV4SUeveoAXMq2u8BpiVqjxO5Ap0Npu5RbJMVYwSoXRWvpfTC8gkDgWjxYlvwn3wxiXHrrQxBJaG6C5XmQPQr+HT7g8u569iNr9JaAzLvusR+1RKj4it68EeRf/oMcS5jMElgl5N3ylz9Nl+DgP42m8XH8BL7ijSw==?cssminify=yes' type='text/css' media='all' />
+<script type='text/javascript' src='https://s2.wp.com/_static/??-eJyFztEKwjAMBdAfsisyOnwRv6XWOFKXtDbphn69HeiDMBQC9+EeuLFLNshhqhcQG9vdK5THO7ooO/sLGMKxeIWOkD84JFZgXW1OogQifoSNltIZJzBVoDTA2mauacN9v4Q8Iyx/WQTNPtxMAcHnun6i4965Q++GwfXxBTkPW9k='></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://tamaraclarkforpitcherpartnershome.wordpress.com/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://s1.wp.com/wp-includes/wlwmanifest.xml" /> 
+<meta name="generator" content="WordPress.com" />
+<link rel="canonical" href="https://tamaraclarkforpitcherpartners.home.blog/" />
+<link rel='shortlink' href='https://wp.me/Pbdv7x-4' />
+<link rel="alternate" type="application/json+oembed" href="https://public-api.wordpress.com/oembed/?format=json&amp;url=https%3A%2F%2Ftamaraclarkforpitcherpartners.home.blog%2F&amp;for=wpcom-auto-discovery" /><link rel="alternate" type="application/xml+oembed" href="https://public-api.wordpress.com/oembed/?format=xml&amp;url=https%3A%2F%2Ftamaraclarkforpitcherpartners.home.blog%2F&amp;for=wpcom-auto-discovery" />
+<!-- Jetpack Open Graph Tags -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Tamara Clark for Pitcher Partners" />
+<meta property="og:description" content="CV" />
+<meta property="og:url" content="https://tamaraclarkforpitcherpartners.home.blog/" />
+<meta property="og:site_name" content="Tamara Clark for Pitcher Partners" />
+<meta property="og:image" content="https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/img_1385.png" />
+<meta property="og:image:width" content="1242" />
+<meta property="og:image:height" content="2688" />
+<meta property="og:locale" content="en_GB" />
+<meta name="twitter:site" content="@wordpressdotcom" />
+<meta name="twitter:text:title" content="Tamara Clark For Pitcher&nbsp;Partners" />
+<meta name="twitter:card" content="summary" />
+<meta property="article:publisher" content="https://www.facebook.com/WordPresscom" />
+
+<!-- End Jetpack Open Graph Tags -->
+<link rel="shortcut icon" type="image/x-icon" href="https://s1.wp.com/i/favicon.ico" sizes="16x16 24x24 32x32 48x48" />
+<link rel="icon" type="image/x-icon" href="https://s1.wp.com/i/favicon.ico" sizes="16x16 24x24 32x32 48x48" />
+<link rel="apple-touch-icon-precomposed" href="https://s2.wp.com/i/webclip.png" />
+<link rel="search" type="application/opensearchdescription+xml" href="https://tamaraclarkforpitcherpartners.home.blog/osd.xml" title="Tamara Clark for Pitcher Partners" />
+<link rel="search" type="application/opensearchdescription+xml" href="https://s1.wp.com/opensearch.xml" title="WordPress.com" />
+<meta name="application-name" content="Tamara Clark for Pitcher Partners" /><meta name="msapplication-window" content="width=device-width;height=device-height" /><meta name="msapplication-tooltip" content="CV" /><meta name="msapplication-task" content="name=Subscribe;action-uri=https://tamaraclarkforpitcherpartners.home.blog/feed/;icon-uri=https://s1.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=Sign up for a free blog;action-uri=http://wordpress.com/signup/;icon-uri=https://s1.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=WordPress.com Support;action-uri=http://support.wordpress.com/;icon-uri=https://s1.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=WordPress.com Forums;action-uri=http://forums.wordpress.com/;icon-uri=https://s1.wp.com/i/favicon.ico" /><meta name="description" content="I would be honoured to assist your team with any and all writing assignments. I am capable of understanding complicated information and writing in an engaging and user friendly manner. Communication is my Passion
+. Call: 0447312124Email: tamarac312@gmail.comAddress: 84c Collins Street, Thornbury. A second-year journalism student and salaried magazine writer at RMIT University with experience in&hellip;" />
+</head>
+
+<body class="home page-template-default page page-id-4 wp-embed-responsive mp6 customizer-styles-applied singular image-filters-enabled hide-homepage-title admin-bar highlander-enabled highlander-light">
+<div id="page" class="site">
+	<a class="skip-link screen-reader-text" href="#content">Skip to content</a>
+
+		<header id="masthead" class="site-header">
+
+			<div class="site-branding-container">
+				<div class="site-branding">
+
+								<p class="site-title"><a href="https://tamaraclarkforpitcherpartners.home.blog/" rel="home">Tamara Clark Resume</a></p>
+			
+				<p class="site-description">
+				CV			</p>
+			</div><!-- .site-branding -->
+			</div><!-- .layout-wrap -->
+
+					</header><!-- #masthead -->
+
+	<div id="content" class="site-content">
+
+	<section id="primary" class="content-area">
+		<main id="main" class="site-main">
+
+			
+<article id="post-4" class="post-4 page type-page status-publish hentry entry">
+		<header class="entry-header">
+		
+<h1 class="entry-title">Tamara Clark For Pitcher&nbsp;Partners</h1>
+	</header>
+	
+	<div class="entry-content">
+		
+<p><p style="text-align:center;" class="has-small-font-size"><em>Call: 0447312124<br>Email: <a href="mailto:tamarac312@gmail.com">tamarac312@gmail.com</a><br>Address: 84c Collins Street, Thornbury.</em></p>
+ </p>
+
+
+
+<div data-carousel-extra='{"blog_id":165757591,"permalink":"https:\/\/tamaraclarkforpitcherpartners.home.blog\/"}' style="height:20px;" aria-hidden="true" class="wp-block-spacer"></div>
+
+
+
+<div data-carousel-extra='{"blog_id":165757591,"permalink":"https:\/\/tamaraclarkforpitcherpartners.home.blog\/"}' class="wp-block-cover alignfull" style="background-image:url('https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/mountaindawn.jpg');background-position:50% 50%;"><div data-carousel-extra='{"blog_id":165757591,"permalink":"https:\/\/tamaraclarkforpitcherpartners.home.blog\/"}' class="wp-block-cover__inner-container">
+<h1 class="has-text-align-center">Communication is my Passion.</h1>
+</div></div>
+
+
+
+
+
+
+<p style="text-align:center;">A second-year journalism student, Student Union member and salaried Editor of Catalyst Magazine at RMIT University with experience in content creation, multimedia journalism, news production and presentation, technical writing, radio journalism, creative writing and photojournalism. </p>
+
+
+
+<p><strong>KEY SKILLS</strong></p>
+
+
+
+<ul><li>Exceptional written and verbal communication skills</li><li>Works well under pressure</li><li>Highly responsible and reliable</li><li>Strong interpersonal skills</li><li>Upbeat, outgoing and positive</li><li>Excellent time management and prioritisation skills</li><li>Fast and easy learner; an eagerness to learn</li><li>Strong computer skills including advanced competency with Microsoft Office and Adobe Suite.</li></ul>
+
+
+
+<p class="has-drop-cap">Achieving a perfect score in written communication in the General Assessment Task (GAT, 2016) and an A+ outcome in VCE English at Frankston High School, I began a marketing course at RMIT university in which I became an expert in the Microsoft suite and developed an understanding of adobe, HTML, computing and marketing principles.</p>
+
+
+
+<p></p>
+
+
+
+<p class="has-drop-cap">During this time, I developed a blog and wrote at any given moment possible. I earned a position as a content writer at a start up media company, Vicious Vibes. For months I worked alongside inspirational creatives who fuelled my passion for creation and storytelling. I redirected myself and my course from marketing to journalism.</p>
+
+
+
+<p class="has-small-font-size">Reference: Jiayden Mills,  Content Manager (art@jydn.com.au)</p>
+
+
+
+<div data-carousel-extra='{"blog_id":165757591,"permalink":"https:\/\/tamaraclarkforpitcherpartners.home.blog\/"}' style="height:20px;" aria-hidden="true" class="wp-block-spacer"></div>
+
+
+
+<p class="has-drop-cap">While at Vicious Vibes (2017), I consistently produced multiple articles per day. This involved writing copy, press releases, interviewing artists, writing biographies, filming sets, photographing events and liaising with events’ managers and producers. I worked autonomously and as part of a team with ease; using initiative but asking questions when needed. Unfortunately, this start up ran out of funds and the website is no longer available. Here are two posts I have personally saved:</p>
+
+
+
+<div data-carousel-extra='{"blog_id":165757591,"permalink":"https:\/\/tamaraclarkforpitcherpartners.home.blog\/"}' class="wp-block-file"><a href="https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/tamara_viciousvibes_first-three-articles-and-first-live-video.-6-7june-2017.docx">tamara_viciousvibes_first-three-articles-and-first-live-video.-6-7june-2017</a><a href="https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/tamara_viciousvibes_first-three-articles-and-first-live-video.-6-7june-2017.docx" class="wp-block-file__button" download>Download</a></div>
+
+
+
+<div data-carousel-extra='{"blog_id":165757591,"permalink":"https:\/\/tamaraclarkforpitcherpartners.home.blog\/"}' class="wp-block-file"><a href="https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/tamara-viciousvibes-article-7-june2017-queens-birthday-1.docx">tamara-viciousvibes-article-7-june2017-queens-birthday-1</a><a href="https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/tamara-viciousvibes-article-7-june2017-queens-birthday-1.docx" class="wp-block-file__button" download>Download</a></div>
+
+
+<p class="has-drop-cap">I worked alongside Pitcher Partners Investment Solutions' Erica Plompen this year and assisted in rewriting their website. This involved condensing 25 pages worth of information into user friendly blurbs. </p>
+
+<p class="has-small-font-size">Reference: Erica Plompen (0408 102 096)</p>
+
+
+<p class="has-drop-cap">Since securing a place in RMIT’s Journalism Society (2018), I have been selected for a number of unique opportunities. A highlight of my time at RMIT was being selected to present and produce news stories on Chanel 31. <br></p>
+
+
+
+<p class="has-small-font-size">Reference: Phillip Kafcaloudes, Tutor (0419 227 317)</p>
+
+
+
+<p class="has-drop-cap">Presenting involved curating an original news idea and researching, refining, interviewing and compiling interesting information. Attached is a link to my news story on Designer Snake Breeding which was aired on Chanel 31 (starting at 37:09). </p>
+
+
+
+<p class="has-drop-cap">The production (also in this news program) was on the release of the 2019 Victorian Budget (starting at 9:28). In order to complete the production of this story, I had to be up to date (by the second) with any information being released from State Parliament. I was required to choose and set up a shot on the steps of Parliament, and wait for politicians to be released from the budget lock up. The shot I selected and set up on Parliament House&#8217;s steps was coveted and used by the teams from Channel 7, Channel 9, ABC and SBS. This gave me an opportunity to chat professionally with these teams.</p>
+
+
+
+<figure class="wp-block-image"><a href="https://www.youtube.com/watch?v=rtCGsQRSZ5c&amp;t=2350s"><img data-attachment-id="23" data-permalink="https://tamaraclarkforpitcherpartners.home.blog/screen-shot-2019-08-20-at-12-06-39-pm/" data-orig-file="https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/screen-shot-2019-08-20-at-12.06.39-pm.png" data-orig-size="1731,997" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="screen-shot-2019-08-20-at-12.06.39-pm" data-image-description="" data-medium-file="https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/screen-shot-2019-08-20-at-12.06.39-pm.png?w=300" data-large-file="https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/screen-shot-2019-08-20-at-12.06.39-pm.png?w=640" src="https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/screen-shot-2019-08-20-at-12.06.39-pm.png" alt="" class="wp-image-23" /></a><figcaption>RMIT Newsline Program: C31 (Presenting and Production)<br></figcaption></figure>
+
+
+
+<p></p>
+
+
+
+<p class="has-drop-cap">Another special opportunity I have had with RMIT was being the only student chosen to be an assistant producer a series of short educational films with talent Sushi Das (former chief editor of The Age) alongside two ABC producers and an RMIT producer. These pieces are currently being edited but attached is a package we used as a prompt, to provide some insight as to the work we created:</p>
+
+
+
+<figure class="wp-block-image"><a href="https://www.abc.net.au/education/media-literacy/news-challenge-2019/10994638"><img data-attachment-id="48" data-permalink="https://tamaraclarkforpitcherpartners.home.blog/img_1380/" data-orig-file="https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/img_1380.jpg" data-orig-size="1242,1318" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="img_1380" data-image-description="" data-medium-file="https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/img_1380.jpg?w=283" data-large-file="https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/img_1380.jpg?w=640" src="https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/img_1380.jpg" alt="" class="wp-image-48" /></a></figure>
+
+
+
+<p class="has-small-font-size">Reference: Tito Ambyo, Tutor (RMIT University)</p>
+
+
+
+<figure class="wp-block-image"><img alt="" /></figure>
+
+
+
+<p class="has-drop-cap">I continue to omit myself through various writing styles on my blog. My first blog post achieved just over six thousand views and around three thousand reads.   Below are linked images to this piece, <em>Sex Sells</em> and my favourite piece, <em>On Happiness</em> (which I feel is closer to writing you would be interested in seeing, from me).  <em>Sex Sells</em> was noticed by a peer and resulted in selection by the Student Union to run as a candidate and become the new editor of the RMIT University Magazine, Catalyst. I earned the position and am now a member of the student union. </p>
+
+
+
+<div data-carousel-extra='{"blog_id":165757591,"permalink":"https:\/\/tamaraclarkforpitcherpartners.home.blog\/"}' class="wp-block-image"><figure class="aligncenter is-resized"><img data-attachment-id="15" data-permalink="https://tamaraclarkforpitcherpartners.home.blog/screen-shot-2019-08-20-at-11-30-13-am/" data-orig-file="https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/screen-shot-2019-08-20-at-11.30.13-am.png" data-orig-size="2880,1800" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="screen-shot-2019-08-20-at-11.30.13-am" data-image-description="" data-medium-file="https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/screen-shot-2019-08-20-at-11.30.13-am.png?w=300" data-large-file="https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/screen-shot-2019-08-20-at-11.30.13-am.png?w=640" src="https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/screen-shot-2019-08-20-at-11.30.13-am.png" alt="" class="wp-image-15" width="348" height="217" srcset="https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/screen-shot-2019-08-20-at-11.30.13-am.png?w=348&amp;h=217 348w, https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/screen-shot-2019-08-20-at-11.30.13-am.png?w=694&amp;h=434 694w, https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/screen-shot-2019-08-20-at-11.30.13-am.png?w=150&amp;h=94 150w, https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/screen-shot-2019-08-20-at-11.30.13-am.png?w=300&amp;h=188 300w" sizes="(max-width: 348px) 100vw, 348px" /></figure></div>
+
+
+
+<hr class="wp-block-separator is-style-wide" />
+
+
+
+<figure class="wp-block-embed is-type-rich"><div data-carousel-extra='{"blog_id":165757591,"permalink":"https:\/\/tamaraclarkforpitcherpartners.home.blog\/"}' class="wp-block-embed__wrapper">
+<a class="m-story" href="https://medium.com/@tamarac312/on-happiness-23e010a829f5" target="_blank" data-width="640" data-border="1" data-collapsed="">View at Medium.com</a>
+</div></figure>
+
+
+
+<figure class="wp-block-embed is-type-rich"><div data-carousel-extra='{"blog_id":165757591,"permalink":"https:\/\/tamaraclarkforpitcherpartners.home.blog\/"}' class="wp-block-embed__wrapper">
+<a class="m-story" href="https://medium.com/@tamaraclark/sex-sells-5902f3ad85b4" target="_blank" data-width="640" data-border="1" data-collapsed="">View at Medium.com</a>
+</div></figure>
+
+
+
+<p class="has-drop-cap">My experience with technical writing goes back years. My mother employs me in her biochemistry laboratory (Mimotopes) and I convert technical practical reports into easily computable blurbs, for customers. My technical writing skills have been furthered through ad hoc assignments such as writing<em> </em>this job description for Nexus, who I shared an office building with:</p>
+
+
+
+<p></p>
+
+
+
+<ul data-carousel-extra='{"blog_id":165757591,"permalink":"https:\/\/tamaraclarkforpitcherpartners.home.blog\/"}' class="wp-block-gallery columns-3 is-cropped"><li class="blocks-gallery-item"><figure><img data-attachment-id="54" data-permalink="https://tamaraclarkforpitcherpartners.home.blog/img_1383/" data-orig-file="https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/img_1383.png" data-orig-size="1242,2688" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="img_1383" data-image-description="" data-medium-file="https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/img_1383.png?w=139" data-large-file="https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/img_1383.png?w=473" src="https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/img_1383.png" alt="" data-id="54" data-link="https://tamaraclarkforpitcherpartners.home.blog/img_1383/" class="wp-image-54" /></figure></li><li class="blocks-gallery-item"><figure><img data-attachment-id="53" data-permalink="https://tamaraclarkforpitcherpartners.home.blog/img_1384/" data-orig-file="https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/img_1384.png" data-orig-size="1242,2688" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="img_1384" data-image-description="" data-medium-file="https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/img_1384.png?w=139" data-large-file="https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/img_1384.png?w=473" src="https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/img_1384.png" alt="" data-id="53" data-link="https://tamaraclarkforpitcherpartners.home.blog/img_1384/" class="wp-image-53" /></figure></li><li class="blocks-gallery-item"><figure><img data-attachment-id="52" data-permalink="https://tamaraclarkforpitcherpartners.home.blog/img_1385/" data-orig-file="https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/img_1385.png" data-orig-size="1242,2688" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="img_1385" data-image-description="" data-medium-file="https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/img_1385.png?w=139" data-large-file="https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/img_1385.png?w=473" src="https://tamaraclarkforpitcherpartnershome.files.wordpress.com/2019/08/img_1385.png" alt="" data-id="52" data-link="https://tamaraclarkforpitcherpartners.home.blog/img_1385/" class="wp-image-52" /></figure></li></ul>
+
+
+
+<p class="has-small-font-size">Reference: Sonja Plompen, Mimotopes GM (0417 058 769)<br>Reference: Felise Mataupu, PR Manager (0431 315 295)</p>
+
+
+
+<p class="has-drop-cap">Finally, I am not afraid to fail. Here, I ask Scott Morison why he did not sign the International Women&#8217;s Day Statement. I receive a &#8220;that&#8217;s great&#8221; and a door slammed in my face. My favourite rejection!</p>
+
+
+
+<figure class="wp-block-image"><img src="https://scontent.fcbr1-1.fna.fbcdn.net/v/t1.15752-9/54435037_809537006078150_5411749266446090240_n.jpg?_nc_cat=106&amp;_nc_oc=AQkQQuoDJ7Kgu9LvwSUN-MBCiPkbR15PLkvUu2roCELnREn_z_IRqBRoUw-c_dhmnJg&amp;_nc_ht=scontent.fcbr1-1.fna&amp;oh=17bce798542b03b65e71125c94de80df&amp;oe=5E0DA071" alt="" /></figure>
+
+
+
+<p></p>
+
+
+
+<p></p>
+
+
+
+<p></p>
+
+
+
+<p></p>
+
+
+
+<p></p>
+
+
+
+<p style="text-align:center;" class="has-small-font-size">Thank you for considering me for this position. </p>
+
+
+
+	</div><!-- .entry-content -->
+
+	</article><!-- #post-4 -->
+
+		</main><!-- #main -->
+	</section><!-- #primary -->
+
+
+	</div><!-- #content -->
+
+	<footer id="colophon" class="site-footer">
+				<div class="site-info">
+										<a class="site-name" href="https://tamaraclarkforpitcherpartners.home.blog/" rel="home">Tamara Clark for Pitcher Partners</a><span class="comma">,</span>
+						<a href="https://en-gb.wordpress.org/" class="imprint">
+				Proudly powered by WordPress.			</a>
+								</div><!-- .site-info -->
+	</footer><!-- #colophon -->
+
+</div><!-- #page -->
+
+<!--  -->
+<div id="wpadminbar" class="marketing-bar"><div class="marketing-bar-text">Create your website at WordPress.com</div><a class="marketing-bar-button" href="https://en-gb.wordpress.com/?ref=marketing_bar">Get started</a></div><script type='text/javascript' src='//0.gravatar.com/js/gprofiles.js?ver=201938y'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var WPGroHo = {"my_hash":""};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://s1.wp.com/wp-content/mu-plugins/gravatar-hovercards/wpgroho.js?m=1380573781h'></script>
+
+	<script>
+		//initialize and attach hovercards to all gravatars
+		jQuery( document ).ready( function( $ ) {
+
+			if (typeof Gravatar === "undefined"){
+				return;
+			}
+
+			if ( typeof Gravatar.init !== "function" ) {
+				return;
+			}			
+
+			Gravatar.profile_cb = function( hash, id ) {
+				WPGroHo.syncProfileData( hash, id );
+			};
+			Gravatar.my_hash = WPGroHo.my_hash;
+			Gravatar.init( 'body', '#wp-admin-bar-my-account' );
+		});
+	</script>
+
+		<div style="display:none">
+	</div>
+
+	<div id="carousel-reblog-box">
+		<form action="#" name="carousel-reblog">
+			<textarea id="carousel-reblog-content" name="carousel-reblog-content" placeholder="Add your thoughts here... (optional)"></textarea>
+			<label for="carousel-reblog-to-blog-id" id="carousel-reblog-lblogid">Post to</label>
+			<select name="carousel-reblog-to-blog-id" id="carousel-reblog-to-blog-id">
+						</select>
+
+			<div class="submit">
+				<span class="canceltext"><a href="#" class="cancel">Cancel</a></span>
+				<input type="submit" name="carousel-reblog-submit" class="button" id="carousel-reblog-submit" value="Reblog Post" />
+				<input type="hidden" id="carousel-reblog-blog-id" value="165757591" />
+				<input type="hidden" id="carousel-reblog-blog-url" value="https://tamaraclarkforpitcherpartners.home.blog" />
+				<input type="hidden" id="carousel-reblog-blog-title" value="Tamara Clark for Pitcher Partners" />
+				<input type="hidden" id="carousel-reblog-post-url" value="" />
+				<input type="hidden" id="carousel-reblog-post-title" value="" />
+			</div>
+
+			<input type="hidden" id="_wpnonce" name="_wpnonce" value="dcf9c8a19f" /><input type="hidden" name="_wp_http_referer" value="/" />		</form>
+
+		<div class="arrow"></div>
+	</div>
+<div class="widget widget_eu_cookie_law_widget"><div
+	class="hide-on-button ads-active"
+	data-hide-timeout="30"
+	data-consent-expiration="180"
+	id="eu-cookie-law"
+>
+	<form method="post">
+		<input type="submit" value="Close and accept" class="accept" />
+
+		Privacy &amp; Cookies: This site uses cookies. By continuing to use this website, you agree to their use. <br />
+To find out more, including how to control cookies, see here:
+		<a href="https://automattic.com/cookies" >
+			Cookie Policy		</a>
+ </form>
+</div>
+</div><link rel='stylesheet' id='all-css-0-2' href='https://s0.wp.com/wp-content/mu-plugins/carousel/jetpack-carousel.css?m=1563361695h&cssminify=yes' type='text/css' media='all' />
+<script type='text/javascript'>
+/* <![CDATA[ */
+var comment_like_text = {"loading":"Loading..."};
+/* ]]> */
+</script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var actionbardata = {"siteID":"165757591","siteName":"Tamara Clark for Pitcher Partners","siteURL":"https:\/\/tamaraclarkforpitcherpartners.home.blog","icon":"<img alt='' src='https:\/\/s2.wp.com\/i\/logo\/wpcom-gray-white.png' class='avatar avatar-50' height='50' width='50' \/>","canManageOptions":"","canCustomizeSite":"","isFollowing":"","themeSlug":"pub\/professional-business","signupURL":"https:\/\/wordpress.com\/start\/","loginURL":"https:\/\/wordpress.com\/log-in?redirect_to=https%3A%2F%2Ftamaraclarkforpitcherpartners.home.blog%2F&signup_flow=account&domain=tamaraclarkforpitcherpartners.home.blog","themeURL":"https:\/\/wordpress.com\/theme\/professional-business\/","xhrURL":"https:\/\/tamaraclarkforpitcherpartners.home.blog\/wp-admin\/admin-ajax.php","nonce":"42501782dd","isSingular":"1","isFolded":"","isLoggedIn":"","isMobile":"","subscribeNonce":"<input type=\"hidden\" id=\"_wpnonce\" name=\"_wpnonce\" value=\"8b0969efab\" \/>","referer":"https:\/\/tamaraclarkforpitcherpartners.home.blog\/","canFollow":"1","feedID":"99305602","statusMessage":"","customizeLink":"https:\/\/tamaraclarkforpitcherpartnershome.wordpress.com\/wp-admin\/customize.php?url=https%3A%2F%2Ftamaraclarkforpitcherpartnershome.wordpress.com%2F","postID":"4","shortlink":"https:\/\/wp.me\/Pbdv7x-4","canEditPost":"","editLink":"https:\/\/wordpress.com\/page\/tamaraclarkforpitcherpartners.home.blog\/4","statsLink":"https:\/\/wordpress.com\/stats\/post\/4\/tamaraclarkforpitcherpartners.home.blog","i18n":{"view":"View site","follow":"Follow","following":"Following","edit":"Edit","login":"Log in","signup":"Sign up","customize":"Customise","report":"Report this content","themeInfo":"Get theme: Professional Business","shortlink":"Copy shortlink","copied":"Copied","followedText":"New posts from this site will now appear in your <a href=\"https:\/\/wordpress.com\/\">Reader<\/a>","foldBar":"Collapse this bar","unfoldBar":"Expand this bar","editSubs":"Manage subscriptions","viewReader":"View site in Reader","viewReadPost":"View post in Reader","subscribe":"Sign me up","enterEmail":"Enter your email address","followers":"","alreadyUser":"Already have a WordPress.com account? <a href=\"https:\/\/wordpress.com\/log-in?redirect_to=https%3A%2F%2Ftamaraclarkforpitcherpartners.home.blog%2F&signup_flow=account&domain=tamaraclarkforpitcherpartners.home.blog\">Log in now.<\/a>","stats":"Statistics"}};
+/* ]]> */
+</script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var jetpackCarouselStrings = {"widths":[370,700,1000,1200,1400,2000],"is_logged_in":"","lang":"en","ajaxurl":"https:\/\/tamaraclarkforpitcherpartners.home.blog\/wp-admin\/admin-ajax.php","nonce":"a64e837a74","display_exif":"1","display_geo":"1","single_image_gallery":"1","single_image_gallery_media_file":"","background_color":"black","comment":"Comment","post_comment":"Post Comment","write_comment":"Write a Comment...","loading_comments":"Loading Comments...","download_original":"View full size <span class=\"photo-size\">{0}<span class=\"photo-size-times\">\u00d7<\/span>{1}<\/span>","no_comment_text":"Please be sure to submit some text with your comment.","no_comment_email":"Please provide an email address to comment.","no_comment_author":"Please provide your name to comment.","comment_post_error":"Sorry, but there was an error posting your comment. Please try again later.","comment_approved":"Your comment was approved.","comment_unapproved":"Your comment is in moderation.","camera":"Camera","aperture":"Aperture","shutter_speed":"Shutter Speed","focal_length":"Focal Length","copyright":"Copyright","comment_registration":"0","require_name_email":"1","login_url":"https:\/\/tamaraclarkforpitcherpartnershome.wordpress.com\/wp-login.php?redirect_to=https%3A%2F%2Ftamaraclarkforpitcherpartners.home.blog%2F","blog_id":"165757591","meta_data":["camera","aperture","shutter_speed","focal_length","copyright"],"local_comments_commenting_as":"<fieldset><label for=\"email\">Email (Required)<\/label> <input type=\"text\" name=\"email\" class=\"jp-carousel-comment-form-field jp-carousel-comment-form-text-field\" id=\"jp-carousel-comment-form-email-field\" \/><\/fieldset><fieldset><label for=\"author\">Name (Required)<\/label> <input type=\"text\" name=\"author\" class=\"jp-carousel-comment-form-field jp-carousel-comment-form-text-field\" id=\"jp-carousel-comment-form-author-field\" \/><\/fieldset><fieldset><label for=\"url\">Website<\/label> <input type=\"text\" name=\"url\" class=\"jp-carousel-comment-form-field jp-carousel-comment-form-text-field\" id=\"jp-carousel-comment-form-url-field\" \/><\/fieldset>","reblog":"Reblog","reblogged":"Reblogged","reblog_add_thoughts":"Add your thoughts here... (optional)","reblogging":"Reblogging...","post_reblog":"Post Reblog","stats_query_args":"blog=165757591&v=wpcom&tz=1&user_id=0&subd=tamaraclarkforpitcherpartnershome","is_public":"1","reblog_enabled":""};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://s2.wp.com/_static/??-eJyVkd2KAjEMRl/IGgRn1xvxWWIb3HT6Z5M669tbcRVXZMCrhpPvhJDCVIzNSSkpeAFHJ7ZUfpdeFvDUis2U0A6cBAKPJHBs1OgHkwtUZ8I2x9iRuUn+au9BJi70ifQPzIgTuwOpALXezSOTCTiBUiwBlV74zBx0kZPZY4WIolR7ZfKJamXXpzzYhxO0oh3n1kernNNVelT3NCcbmrtdQwqnd9z3P6nnv2f5nHp3Y6y5CQXwpKXvZe6gO7u4XQ1f62H43mzW/gJQKsyl'></script>
+<script type='text/javascript' src='https://static.medium.com/embed.js?ver=wpcom'></script>
+	<script>
+	/(trident|msie)/i.test(navigator.userAgent)&&document.getElementById&&window.addEventListener&&window.addEventListener("hashchange",function(){var t,e=location.hash.substring(1);/^[A-z0-9_-]+$/.test(e)&&(t=document.getElementById(e))&&(/^(?:a|select|input|button|textarea)$/i.test(t.tagName)||(t.tabIndex=-1),t.focus())},!1);
+	</script>
+	<script type="text/javascript">
+// <![CDATA[
+(function() {
+try{
+  if ( window.external &&'msIsSiteMode' in window.external) {
+    if (window.external.msIsSiteMode()) {
+      var jl = document.createElement('script');
+      jl.type='text/javascript';
+      jl.async=true;
+      jl.src='/wp-content/plugins/ie-sitemode/custom-jumplist.php';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(jl, s);
+    }
+  }
+}catch(e){}
+})();
+// ]]>
+</script><script src="//stats.wp.com/w.js?60" type="text/javascript" async defer></script>
+<script type="text/javascript">
+_tkq = window._tkq || [];
+_stq = window._stq || [];
+_tkq.push(['storeContext', {'blog_id':'165757591','blog_tz':'1','user_lang':'en-gb','blog_lang':'en-gb','user_id':'0'}]);
+_stq.push(['view', {'blog':'165757591','v':'wpcom','tz':'1','user_id':'0','post':'4','subd':'tamaraclarkforpitcherpartnershome'}]);
+_stq.push(['extra', {'crypt':'UE40eW5QN0p8M2Y/RE1zNDZ8S252Wis9XUQyb3YrcUVIU2R0VH5TdVc3aWJOWS5HUTZSRHNZdTIzLmN+VUZ8MnpYNlVPT3FVV3otTDNqVE51UlpOYzJ0MnQmcE9RZy1PW0hdTnptWjJST1g5SjU1bm96R01bVldvYWxkZFsmUzhta255eVJrM2JORWh6citHSE93QW1hW2x2JW8/ZEhVLS5bM2lWTUcsc2FbP3ZifGQ9d0lCNyx+RzBqZG1bTnZdcVZ0QUE3OXQ9QlVtT3BNaGNnfCwrU2hdMz1VcmxCQW9RaVJZTD1IJjUlLzFVVSY2S0lhbkIlZGxYQ1RhQ0tzS0g4NUQmPVVJSFFOcTMrOTE3UXVscnNZWSxlXXE1Q1dYK2dFV0g='}]);
+_stq.push([ 'clickTrackerInit', '165757591', '4' ]);
+	</script>
+<noscript><img src="https://pixel.wp.com/b.gif?v=noscript" style="height:0px;width:0px;overflow:hidden" alt="" /></noscript>
+<script>
+if ( 'object' === typeof wpcom_mobile_user_agent_info ) {
+
+	wpcom_mobile_user_agent_info.init();
+	var mobileStatsQueryString = "";
+	
+	if( false !== wpcom_mobile_user_agent_info.matchedPlatformName )
+		mobileStatsQueryString += "&x_" + 'mobile_platforms' + '=' + wpcom_mobile_user_agent_info.matchedPlatformName;
+	
+	if( false !== wpcom_mobile_user_agent_info.matchedUserAgentName )
+		mobileStatsQueryString += "&x_" + 'mobile_devices' + '=' + wpcom_mobile_user_agent_info.matchedUserAgentName;
+	
+	if( wpcom_mobile_user_agent_info.isIPad() )
+		mobileStatsQueryString += "&x_" + 'ipad_views' + '=' + 'views';
+
+	if( "" != mobileStatsQueryString ) {
+		new Image().src = document.location.protocol + '//pixel.wp.com/g.gif?v=wpcom-no-pv' + mobileStatsQueryString + '&baba=' + Math.random();
+	}
+	
+}
+</script>
+</body>
+</html>
+x
